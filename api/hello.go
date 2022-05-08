@@ -16,7 +16,7 @@ func HelloEndpoint(w http.ResponseWriter, r *http.Request) {
 	cwd, cwdErr := os.Getwd()
 
 	if cwdErr != nil {
-		log.Panicln("/api/hello : cwd error : ", cwdErr)
+		log.Println("/api/hello : cwd error : ", cwdErr)
 		w.Write([]byte("/api/hello : cwd error : " + cwdErr.Error()))
 		return
 	}
@@ -26,7 +26,7 @@ func HelloEndpoint(w http.ResponseWriter, r *http.Request) {
 	saveAllErr := goex.SaveAllFiles("exeCache")
 
 	if saveAllErr != nil {
-		log.Panicln("/api/simple : save all files error : ", saveAllErr)
+		log.Println("/api/simple : save all files error : ", saveAllErr)
 		w.Write([]byte("/api/simple : save all files error : " + saveAllErr.Error()))
 		return
 	}
