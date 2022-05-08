@@ -33,7 +33,7 @@ func HelloEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	// list all files in current directory
 
-	err := filepath.Walk(cwd, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(cwd+"/exeCache", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			fmt.Println(err)
 			return err

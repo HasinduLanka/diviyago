@@ -2,10 +2,11 @@ package goex
 
 import (
 	"embed"
-	"io/fs"
-	"log"
+	"encoding/json"
 	"os"
 	"strings"
+
+	"github.com/HasinduLanka/diviyago/pkg/symembed"
 )
 
 //go:embed exeFiles/*
@@ -22,7 +23,10 @@ func SaveAllFiles(saveDir string) error {
 		saveDir = saveDir + "/"
 	}
 
-	fs.WalkDir(embedcontent, ".", func(path string, dir os.DirEntry, err error) error {
+	// Delete the directory if it exists
+	os.RemoveAll(saveDir)
+
+	Walk(embedcontent, ".", func(path string, dir os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -42,11 +46,31 @@ func SaveAllFiles(saveDir string) error {
 				return fileWrErr
 			}
 
-			log.Println("saved file : ", saveDir+path)
+			// log.Println("saved file : ", saveDir+path)
 		}
 
 		return nil
 	})
+
+	manifestBytes, manifestBytesErr := embedcontent.ReadFile("exeFiles/manifest.json")
+
+	if manifestBytesErr != nil {
+		return manifestBytesErr
+	}
+
+	var manifest symembed.SymManifest
+
+	manifestErr := json.Unmarshal(manifestBytes, &manifest)
+
+	if manifestErr != nil {
+		return manifestErr
+	}
+
+	applyMnErr := manifest.ApplyManifest(saveDir + "exeFiles")
+
+	if applyMnErr != nil {
+		return applyMnErr
+	}
 
 	return nil
 }

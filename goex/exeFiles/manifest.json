@@ -1,0 +1,20 @@
+{
+  "Links": {
+    "magickpkg/usr/bin/animate": "magickpkg/usr/bin/magick",
+    "magickpkg/usr/bin/compare": "magickpkg/usr/bin/magick",
+    "magickpkg/usr/bin/composite": "magickpkg/usr/bin/magick",
+    "magickpkg/usr/bin/conjure": "magickpkg/usr/bin/magick",
+    "magickpkg/usr/bin/convert": "magickpkg/usr/bin/magick",
+    "magickpkg/usr/bin/display": "magickpkg/usr/bin/magick",
+    "magickpkg/usr/bin/identify": "magickpkg/usr/bin/magick",
+    "magickpkg/usr/bin/import": "magickpkg/usr/bin/magick",
+    "magickpkg/usr/bin/magick-script": "magickpkg/usr/bin/magick",
+    "magickpkg/usr/bin/mogrify": "magickpkg/usr/bin/magick",
+    "magickpkg/usr/bin/montage": "magickpkg/usr/bin/magick",
+    "magickpkg/usr/bin/stream": "magickpkg/usr/bin/magick",
+    "magickpkg/usr/lib/libMagickCore-7.Q16HDRI.so": "magickpkg/usr/lib/libMagickCore-7.Q16HDRI.so.10.0.0",
+    "magickpkg/usr/lib/libMagickCore-7.Q16HDRI.so.10": "magickpkg/usr/lib/libMagickCore-7.Q16HDRI.so.10.0.0",
+    "magickpkg/usr/lib/libMagickWand-7.Q16HDRI.so": "magickpkg/usr/lib/libMagickWand-7.Q16HDRI.so.10.0.0",
+    "magickpkg/usr/lib/libMagickWand-7.Q16HDRI.so.10": "magickpkg/usr/lib/libMagickWand-7.Q16HDRI.so.10.0.0"
+  }
+}
