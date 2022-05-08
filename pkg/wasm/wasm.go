@@ -1,9 +1,9 @@
 package wasm
 
 import (
-	"io/ioutil"
 	"log"
 
+	"github.com/HasinduLanka/diviyago/wasmfiles"
 	wasmer "github.com/wasmerio/wasmer-go/wasmer"
 )
 
@@ -14,7 +14,7 @@ func GetWASM(wasmFileName string) (*wasmer.Instance, error) {
 		return getWASMFromBytes(wasmBytes)
 	}
 
-	wasmBytes, err := ioutil.ReadFile(wasmFileName)
+	wasmBytes, err := wasmfiles.GetFile(wasmFileName)
 	if err != nil {
 		return nil, err
 	}

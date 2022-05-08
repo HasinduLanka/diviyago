@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/HasinduLanka/diviyago/api"
+	"github.com/HasinduLanka/diviyago/pkg/wasm"
 	wasmer "github.com/wasmerio/wasmer-go/wasmer"
 )
 
@@ -21,6 +22,7 @@ func main() {
 	multiplexer.Handle("/", http.FileServer(http.Dir("./frontend/public")))
 
 	multiplexer.HandleFunc("/api/hello", api.HelloEndpoint)
+	multiplexer.HandleFunc("/api/simple", api.SimpleEndpoint)
 
 	log.Println("Listening on port 31603. Visit http://localhost:31603 if you're running this locally.")
 
@@ -34,8 +36,8 @@ func main() {
 
 }
 
-func local() {
-	wasmBytes, wasmFileReadErr := ioutil.ReadFile("./wasm/simple.wasm")
+func simplewasm() {
+	wasmBytes, wasmFileReadErr := ioutil.ReadFile("./wasmfiles/simple.wasm")
 
 	if wasmFileReadErr != nil {
 		log.Fatal(wasmFileReadErr)
@@ -59,4 +61,22 @@ func local() {
 	result, _ := sum(5, 37)
 
 	fmt.Println(result) // 42!
+}
+
+func local() {
+	instance, instanceErr := wasm.GetWASM("simple.wasm")
+
+	if instanceErr != nil {
+		log.Fatal(instanceErr)
+	}
+
+	// Gets the `sum` exported function from the WebAssembly instance.
+	sum, _ := instance.Exports.GetFunction("sum")
+
+	// Calls that exported function with Go standard values. The WebAssembly
+	// types are inferred and values are casted automatically.
+	result, _ := sum(50, 307)
+
+	fmt.Println(result)
+
 }
