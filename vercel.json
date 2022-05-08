@@ -1,0 +1,10 @@
+{
+    "functions": {
+        "api/hello.go": {
+            "includeFiles": "goex/**"
+        },
+        "api/simple.go": {
+            "includeFiles": "goex/**"
+        }
+    }
+}
