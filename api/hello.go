@@ -18,6 +18,8 @@ func HelloEndpoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Fprintln(w, "cwd : ", cwd)
+
 	// list all files in current directory
 
 	err := filepath.Walk(cwd, func(path string, info os.FileInfo, err error) error {
