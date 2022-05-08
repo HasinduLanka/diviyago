@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/HasinduLanka/diviyago/goex"
 )
 
 func HelloEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -19,6 +21,14 @@ func HelloEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintln(w, "cwd : ", cwd)
+
+	saveAllErr := goex.SaveAllFiles("exeCache")
+
+	if saveAllErr != nil {
+		log.Panicln("/api/simple : save all files error : ", saveAllErr)
+		w.Write([]byte("/api/simple : save all files error : " + saveAllErr.Error()))
+		return
+	}
 
 	// list all files in current directory
 

@@ -6,8 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-
-	"github.com/amenzhinsky/go-memexec"
 )
 
 var wsroot string = "."
@@ -116,20 +114,23 @@ func ExcecProgramToString(program string, arg ...string) (string, error) {
 }
 
 func GetCmdFromEmbeded(fileName string, arg ...string) (*exec.Cmd, error) {
-	bin, binErr := GetFile(fileName)
+	// bin, binErr := GetFile(fileName)
 
-	if binErr != nil {
-		return nil, binErr
-	}
+	// bin, binErr :=
+	// if binErr != nil {
+	// 	return nil, binErr
+	// }
 
-	exe, memexerr := memexec.New(bin)
-	if memexerr != nil {
-		return nil, memexerr
-	}
+	// exe, memexerr := memexec.New(bin)
+	// if memexerr != nil {
+	// 	return nil, memexerr
+	// }
 
-	// defer exe.Close()
+	// // defer exe.Close()
 
-	cmd := exe.Command(arg...)
+	// cmd := exe.Command(arg...)
+	cmd := exec.Command(fileName, arg...)
+
 	return cmd, nil
 
 }

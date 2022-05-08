@@ -10,13 +10,23 @@ import (
 
 func SimpleEndpoint(wr http.ResponseWriter, req *http.Request) {
 
-	result, exeErr := goex.ExcecProgramToString("magick")
+	saveAllErr := goex.SaveAllFiles("exeCache")
 
-	if exeErr != nil {
-		log.Panicln("/api/simple : exe error : ", exeErr)
-		wr.Write([]byte("/api/simple : exe error : " + exeErr.Error()))
+	if saveAllErr != nil {
+		log.Panicln("/api/simple : save all files error : ", saveAllErr)
+		wr.Write([]byte("/api/simple : save all files error : " + saveAllErr.Error()))
 		return
 	}
+
+	AppRun, AppRunErr := goex.ExcecProgramToString("exeCache/exeFiles/magickpkg/AppRun", "-help")
+
+	if AppRunErr != nil {
+		log.Panicln("/api/simple : AppRun error : ", AppRunErr)
+		wr.Write([]byte("/api/simple : AppRun error : " + AppRunErr.Error()))
+		return
+	}
+
+	result := AppRun
 
 	wr.Write([]byte("Simple Endpoint " + fmt.Sprint(result)))
 }
