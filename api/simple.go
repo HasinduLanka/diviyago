@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/HasinduLanka/diviyago/goex"
 )
 
 func SimpleEndpoint(wr http.ResponseWriter, req *http.Request) {
+
+	os.Chdir("/tmp")
 
 	saveAllErr := goex.SaveAllFiles("exeCache")
 
@@ -18,7 +21,7 @@ func SimpleEndpoint(wr http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	AppRun, AppRunErr := goex.ExcecProgramToString("exeCache/exeFiles/magickpkg/AppRun", "-help")
+	AppRun, AppRunErr := goex.ExcecProgramToString("/tmp/exeCache/exeFiles/magickpkg/AppRun", "-help")
 
 	if AppRunErr != nil {
 		log.Panicln("/api/simple : AppRun error : ", AppRunErr)
