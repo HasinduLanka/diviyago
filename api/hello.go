@@ -12,6 +12,7 @@ import (
 
 func HelloEndpoint(w http.ResponseWriter, r *http.Request) {
 
+	os.Chdir("/tmp")
 	cwd, cwdErr := os.Getwd()
 
 	if cwdErr != nil {
