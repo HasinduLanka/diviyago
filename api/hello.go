@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func HelloEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -19,26 +20,20 @@ func HelloEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	// list all files in current directory
 
-	files, filesErr := os.Open(cwd)
+	err := filepath.Walk(cwd, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
 
-	if filesErr != nil {
-		log.Panicln("/api/hello : files error : ", filesErr)
-		w.Write([]byte("/api/hello : files error : " + filesErr.Error()))
-		return
-	}
+		fmt.Printf("dir: %v: name: %s\n", info.IsDir(), path)
+		fmt.Fprintln(w, info.IsDir(), " -- ", path)
 
-	defer files.Close()
+		return nil
+	})
 
-	filesInfo, filesInfoErr := files.Readdir(-1)
-
-	if filesInfoErr != nil {
-		log.Panicln("/api/hello : filesInfo error : ", filesInfoErr)
-		w.Write([]byte("/api/hello : filesInfo error : " + filesInfoErr.Error()))
-		return
-	}
-
-	for _, file := range filesInfo {
-		fmt.Fprintln(w, file.Name()+"\n")
+	if err != nil {
+		fmt.Println(err)
 	}
 
 	w.Write([]byte("HelloEndpoint"))
