@@ -19,7 +19,6 @@ func main() {
 
 	multiplexer.HandleFunc("/api/hello", api.HelloEndpoint)
 	multiplexer.HandleFunc("/api/simple", api.SimpleEndpoint)
-	multiplexer.HandleFunc("/api/webp", api.WebpEndpoint)
 
 	log.Println("Listening on port 31603. Visit http://localhost:31603 if you're running this locally.")
 

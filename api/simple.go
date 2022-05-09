@@ -1,33 +1,45 @@
 package api
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"time"
 
-	"github.com/HasinduLanka/diviyago/pkg/goex"
+	"github.com/HasinduLanka/diviyago/pkg/convert"
 )
 
 func SimpleEndpoint(wr http.ResponseWriter, req *http.Request) {
 
-	saveAllErr := goex.DeployEmbedFiles("/tmp/diviyago/exeCache/")
+	fileBytes, fileBytesErr := os.ReadFile(`TestMedia/go.png`)
 
-	if saveAllErr != nil {
-		log.Panicln("/api/simple : save all files error : ", saveAllErr)
-		wr.Write([]byte("/api/simple : save all files error : " + saveAllErr.Error()))
+	if fileBytesErr != nil {
+		log.Panicln(`/api/webp : file read error : `, fileBytesErr)
+		wr.Write([]byte(`/api/webp : file read error : ` + fileBytesErr.Error()))
 		return
 	}
 
-	AppRun, AppRunErr := goex.ExcecProgramToString("/tmp/diviyago/exeCache/EmbedFiles/ffmpeg-linux-amd64/ffmpeg",
-		"-i", "/tmp/diviyago/exeCache/EmbedFiles/ffmpeg-linux-amd64/cloudflare.png", "/tmp/diviyago/exeCache/EmbedFiles/ffmpeg-linux-amd64/cloudflare.webp")
+	converter := convert.NewImageConverter()
+	img_s := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(128))
+	img_m := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(640))
+	img_l := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(1080))
+	img_h := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(1920))
 
-	if AppRunErr != nil {
-		log.Panicln("/api/simple : AppRun error : ", AppRunErr)
-		wr.Write([]byte("/api/simple : AppRun error : " + AppRunErr.Error()))
+	result := converter.Convert(fileBytes, nil)
+
+	if result.Error != nil {
+		log.Panicln(`/api/webp : convert error : `, result.Error)
+		wr.Write([]byte(`/api/webp : convert error : ` + result.Error.Error()))
 		return
 	}
 
-	result := AppRun
+	transformedIDs := []string{img_s, img_m, img_l, img_h}
 
-	wr.Write([]byte("Simple Endpoint " + fmt.Sprint(result)))
+	// show a transformed image according to the current time second
+	indx := time.Now().Second() % len(transformedIDs)
+
+	selectedRes := result.TransformedResults[transformedIDs[indx]]
+
+	wr.Header().Set(`Content-Type`, selectedRes.VideoCodec.ContentType())
+	wr.Write(selectedRes.Data)
 }
