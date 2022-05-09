@@ -21,7 +21,7 @@ func SimpleEndpoint(wr http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	AppRun, AppRunErr := goex.ExcecProgramToString("/tmp/exeCache/exeFiles/magickpkg/AppRun", "-help")
+	AppRun, AppRunErr := goex.ExcecProgramToString("/tmp/exeCache/exeFiles/ffmpeg-linux-amd64/ffmpeg", "-encoders")
 
 	if AppRunErr != nil {
 		log.Panicln("/api/simple : AppRun error : ", AppRunErr)
