@@ -51,15 +51,26 @@ func (tr *Transformation) NoScaling() *Transformation {
 	return tr
 }
 
+// Detect the processing format from the content type. This is only used to detect input file format.
+// Detected format wont work for output file formats.
+//
+// Returns FFMPEGFormat in pipe mode. Use FFMPEGFormat.ToFile() to get the corresponding file mode.
 func FormatFromContentType(contentType string) FFMPEGFormat {
 
-	if strings.HasPrefix(contentType, "image/") {
+	contentType = strings.TrimSpace(strings.ToLower(contentType))
+
+	switch contentType {
+	case
+		"image/webp",
+		"image/png",
+		"image/jpeg", "image/jpg",
+		"image/gif":
 		return FFMPEGFormatImagePipe
 
-	} else {
+	default:
 		return FFMPEGFormatNone
-
 	}
+
 }
 
 func (tr *Transformation) ContentType(contentType string) *Transformation {

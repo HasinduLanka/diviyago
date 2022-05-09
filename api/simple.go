@@ -3,21 +3,15 @@ package api
 import (
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/HasinduLanka/diviyago/pkg/convert"
+	"github.com/HasinduLanka/diviyago/testmedia"
 )
 
 func SimpleEndpoint(wr http.ResponseWriter, req *http.Request) {
 
-	fileBytes, fileBytesErr := os.ReadFile(`TestMedia/go.png`)
-
-	if fileBytesErr != nil {
-		log.Panicln(`/api/webp : file read error : `, fileBytesErr)
-		wr.Write([]byte(`/api/webp : file read error : ` + fileBytesErr.Error()))
-		return
-	}
+	testFileBytes := testmedia.FileGoLogo
 
 	converter := convert.NewImageConverter()
 	img_s := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(128))
@@ -25,11 +19,11 @@ func SimpleEndpoint(wr http.ResponseWriter, req *http.Request) {
 	img_l := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(1080))
 	img_h := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(1920))
 
-	result := converter.Convert(fileBytes, nil)
+	result := converter.Convert(testFileBytes, nil)
 
 	if result.Error != nil {
-		log.Panicln(`/api/webp : convert error : `, result.Error)
-		wr.Write([]byte(`/api/webp : convert error : ` + result.Error.Error()))
+		log.Panicln(`/api/simple : convert error : `, result.Error)
+		wr.Write([]byte(`/api/simple : convert error : ` + result.Error.Error()))
 		return
 	}
 

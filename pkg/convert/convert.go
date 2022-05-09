@@ -46,6 +46,27 @@ func NewImageConverter() *Converter {
 	}
 }
 
+// Create a converter according to a content type.
+func FromContentType(contentType string) (*Converter, error) {
+
+	// Test for content type
+	fm := FormatFromContentType(contentType)
+
+	switch fm {
+
+	case FFMPEGFormatImagePipe:
+		return NewImageConverter(), nil
+
+	case FFMPEGFormatImageFile:
+		return NewConverter(), nil
+
+	default:
+		return nil, errors.New("Unknown content type: " + contentType)
+
+	}
+
+}
+
 // Add transformation to the converter. Returns a unique transformation ID.
 func (cnv *Converter) AddTransformation(t *Transformation) string {
 	uniqueID := uuid.New().String()
@@ -90,6 +111,7 @@ func (cnv *Converter) Convert(input []byte, endtask chan bool) ConvertionResult 
 
 	for tid, trn := range cnv.Transform {
 		if trn.outputCacheFile == ffmpegStdIOPipe {
+
 			result.TransformedResults[tid] = &TransformationResult{
 				Transformation: *trn,
 				Data:           cmdRes,
@@ -130,43 +152,47 @@ func (cnv *Converter) buildCommand(outputDir string, ffmpegExe string) (string, 
 
 	outputPipeAvailable := true
 
-	for trnsID, trns := range cnv.Transform {
+	for trnsID, trn := range cnv.Transform {
 
-		if trns.Scale != nil {
-			command = append(command, `-vf`, `scale=`+strconv.Itoa(trns.Scale.Width)+`:`+strconv.Itoa(trns.Scale.Height))
+		if trn.Scale != nil {
+			command = append(command, `-vf`, `scale=`+strconv.Itoa(trn.Scale.Width)+`:`+strconv.Itoa(trn.Scale.Height))
 		}
 
-		if trns.Format != FFMPEGFormatNone {
-			command = append(command, `-f`, string(trns.Format))
+		if trn.Format != FFMPEGFormatNone {
+			command = append(command, `-f`, string(trn.Format))
 		}
 
-		if trns.VideoCodec != FFMPEGCodecNone {
-			command = append(command, `-c:v`, string(trns.VideoCodec))
+		if trn.VideoCodec != FFMPEGCodecNone {
+			command = append(command, `-c:v`, string(trn.VideoCodec))
 		}
 
-		if trns.AudioCodec != FFMPEGCodecNone {
-			command = append(command, `-c:a`, string(trns.AudioCodec))
+		if trn.AudioCodec != FFMPEGCodecNone {
+			command = append(command, `-c:a`, string(trn.AudioCodec))
 		}
 
-		if len(trns.outputCacheFile) == 0 {
+		if len(trn.outputCacheFile) == 0 {
 
 			if outputPipeAvailable {
-				trns.outputCacheFile = ffmpegStdIOPipe
+				trn.Format = trn.Format.ToPipe()
+				trn.outputCacheFile = ffmpegStdIOPipe
 				outputPipeAvailable = false
 
-			} else if trns.VideoCodec != FFMPEGCodecNone {
-				trns.outputCacheFile = outputDir + trnsID + "." + trns.VideoCodec.FileExtension()
+			} else if trn.VideoCodec != FFMPEGCodecNone {
+				trn.Format = trn.Format.ToFile()
+				trn.outputCacheFile = outputDir + trnsID + "." + trn.VideoCodec.FileExtension()
 
-			} else if trns.AudioCodec != FFMPEGCodecNone {
-				trns.outputCacheFile = outputDir + trnsID + "." + trns.AudioCodec.FileExtension()
+			} else if trn.AudioCodec != FFMPEGCodecNone {
+				trn.Format = trn.Format.ToFile()
+				trn.outputCacheFile = outputDir + trnsID + "." + trn.AudioCodec.FileExtension()
 
 			} else {
-				trns.outputCacheFile = outputDir + trnsID
+				trn.Format = trn.Format.ToFile()
+				trn.outputCacheFile = outputDir + trnsID
 
 			}
 		}
 
-		command = append(command, trns.outputCacheFile)
+		command = append(command, trn.outputCacheFile)
 	}
 
 	return ffmpegExe, command
