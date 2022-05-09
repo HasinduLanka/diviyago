@@ -1,7 +1,7 @@
 package goex
 
 import (
-	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -10,100 +10,92 @@ import (
 
 var wsroot string = "."
 
-func ExcecProgram(program string, arg ...string) (string, error) {
-	args := strings.Join(arg, " ")
-	println("Excecute " + program + " " + args)
+func ExcecTask(endTask chan bool, input []byte, program string, arg ...string) ([]byte, error) {
 
-	cmd, cmdErr := GetCmdFromEmbeded(program, arg...)
+	println("Excecute Task " + program + " " + strings.Join(arg, " "))
+
+	cmd, cmdErr := getCmd(program, arg...)
 
 	if cmdErr != nil {
-		return "", cmdErr
+		return nil, cmdErr
 	}
 
 	cmd.Dir = wsroot
-	// configure `Stdout` and `Stderr`
-	cmd.Stdout = os.Stdout
+
+	// cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
 
-	err := cmd.Run()
-	// run command
-	if err != nil {
-		fmt.Println("Error:", err)
+	stdin, stdinerr := cmd.StdinPipe()
+
+	if stdinerr != nil {
+		return nil, stdinerr
 	}
 
-	// out := string(ret)
-	return "Done Excecute " + program + " " + args, err
-}
+	stdout, stdouterr := cmd.StdoutPipe()
 
-func OpenProgram(program string, arg ...string) (string, error) {
-	args := strings.Join(arg, " ")
-	println("Excecute " + program + " " + args)
-
-	cmd, cmdErr := GetCmdFromEmbeded(program, arg...)
-
-	if cmdErr != nil {
-		return "", cmdErr
+	if stdouterr != nil {
+		return nil, stdouterr
 	}
 
-	cmd.Dir = wsroot
+	var output []byte
 
-	err := cmd.Run()
-	// run command
-	if err != nil {
-		fmt.Println("Error:", err)
+	go func() {
+		stdoutput, stdoutputErr := io.ReadAll(stdout)
+		if stdoutputErr != nil {
+			log.Println("Error reading stdout: ", stdoutputErr)
+		}
+
+		output = stdoutput
+	}()
+
+	starterr := cmd.Start()
+	if starterr != nil {
+		log.Println(program+" >> command execute error: ", starterr)
 	}
 
-	// out := string(ret)
-	return "Done Opening " + program + " " + args, err
-}
+	go func() {
+		_, stdinWrErr := stdin.Write(input)
+		if stdinWrErr != nil {
+			log.Println(program+" >> stdin write error : ", stdinWrErr)
+		}
 
-func ExcecCmdTask(command string, endTask chan bool) (string, error) {
-	return ExcecTask("sh", endTask, "-c", command)
-}
+		stdin.Close()
+	}()
 
-func ExcecTask(program string, endTask chan bool, arg ...string) (string, error) {
-	args := strings.Join(arg, " ")
-	println("Excecute Task " + program + " " + args)
+	if endTask != nil {
+		go func() {
+			Kill := <-endTask
 
-	cmd, cmdErr := GetCmdFromEmbeded(program, arg...)
-
-	if cmdErr != nil {
-		return "", cmdErr
+			if Kill {
+				log.Println("killing ", program, cmd.Process.Signal(os.Kill))
+			} else {
+				log.Println("interrupting ", program, cmd.Process.Signal(os.Interrupt))
+			}
+		}()
 	}
 
-	cmd.Dir = wsroot
-	// configure `Stdout` and `Stderr`
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stdout
+	waiterr := cmd.Wait()
 
-	err := cmd.Start()
-	// run command
-	if err != nil {
-		fmt.Println("Error:", err)
+	if waiterr != nil {
+		log.Println(program+" >> command wait error: ", waiterr)
 	}
 
-	Kill := <-endTask
-
-	if Kill {
-		log.Println(cmd.Process.Signal(os.Kill))
-	} else {
-		log.Println(cmd.Process.Signal(os.Interrupt))
-	}
-
-	// out := string(ret)
-	return "Done Excecute Task " + program + " " + args, err
+	return output, nil
 }
 
 func ExcecProgramToString(program string, arg ...string) (string, error) {
 	args := strings.Join(arg, " ")
-	println("Excecute " + program + " " + args)
+	log.Println(program + " >> Excecute " + program + " " + args)
 
-	cmd, cmdErr := GetCmdFromEmbeded(program, arg...)
+	cmd, cmdErr := getCmd(program, arg...)
 
 	if cmdErr != nil {
 		return "", cmdErr
 	}
 
+	// stdin, errStdin := cmd.StdinPipe()
+
+	cmd.StdinPipe()
 	cmd.Dir = wsroot
 	// configure `Stdout` and `Stderr`
 	cmd.Stderr = os.Stdout
@@ -113,22 +105,8 @@ func ExcecProgramToString(program string, arg ...string) (string, error) {
 	return out, err
 }
 
-func GetCmdFromEmbeded(fileName string, arg ...string) (*exec.Cmd, error) {
-	// bin, binErr := GetFile(fileName)
+func getCmd(fileName string, arg ...string) (*exec.Cmd, error) {
 
-	// bin, binErr :=
-	// if binErr != nil {
-	// 	return nil, binErr
-	// }
-
-	// exe, memexerr := memexec.New(bin)
-	// if memexerr != nil {
-	// 	return nil, memexerr
-	// }
-
-	// // defer exe.Close()
-
-	// cmd := exe.Command(arg...)
 	cmd := exec.Command(fileName, arg...)
 
 	return cmd, nil

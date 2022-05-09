@@ -12,18 +12,7 @@ import (
 
 func HelloEndpoint(w http.ResponseWriter, r *http.Request) {
 
-	os.Chdir("/tmp")
-	cwd, cwdErr := os.Getwd()
-
-	if cwdErr != nil {
-		log.Println("/api/hello : cwd error : ", cwdErr)
-		w.Write([]byte("/api/hello : cwd error : " + cwdErr.Error()))
-		return
-	}
-
-	fmt.Fprintln(w, "cwd : ", cwd)
-
-	saveAllErr := goex.SaveAllFiles("exeCache")
+	saveAllErr := goex.SaveAllFiles("/tmp/diviyago/exeCache")
 
 	if saveAllErr != nil {
 		log.Println("/api/simple : save all files error : ", saveAllErr)
@@ -33,7 +22,7 @@ func HelloEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	// list all files in current directory
 
-	err := filepath.Walk(cwd+"/exeCache", func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk("/tmp/diviyago/exeCache", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			fmt.Println(err)
 			return err

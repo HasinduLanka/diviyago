@@ -10,37 +10,32 @@ import (
 
 func WebpEndpoint(wr http.ResponseWriter, req *http.Request) {
 
-	os.Chdir("/tmp")
-
-	saveAllErr := goex.SaveAllFiles("exeCache")
+	saveAllErr := goex.SaveAllFiles(`/tmp/diviyago/exeCache/`)
 
 	if saveAllErr != nil {
-		log.Panicln("/api/webp : save all files error : ", saveAllErr)
-		wr.Write([]byte("/api/webp : save all files error : " + saveAllErr.Error()))
+		log.Panicln(`/api/webp : save all files error : `, saveAllErr)
+		wr.Write([]byte(`/api/webp : save all files error : ` + saveAllErr.Error()))
 		return
 	}
 
-	_, AppRunErr := goex.ExcecProgramToString("/tmp/exeCache/exeFiles/ffmpeg-linux-amd64/ffmpeg",
-		"-i", "/tmp/exeCache/exeFiles/ffmpeg-linux-amd64/cloudflare.png", "/tmp/exeCache/exeFiles/ffmpeg-linux-amd64/cloudflare.webp")
+	fileBytes, fileBytesErr := os.ReadFile(`/tmp/diviyago/exeCache/exeFiles/ffmpeg-linux-amd64/cloudflare.png`)
+
+	if fileBytesErr != nil {
+		log.Panicln(`/api/webp : file read error : `, fileBytesErr)
+		wr.Write([]byte(`/api/webp : file read error : ` + fileBytesErr.Error()))
+		return
+	}
+
+	file, AppRunErr := goex.ExcecTask(nil, fileBytes, `/tmp/diviyago/exeCache/exeFiles/ffmpeg-linux-amd64/ffmpeg`, `-y`, `-f`, `image2pipe`,
+		`-i`, `pipe:`, `-vf`, `scale=360:-1`, `-f`, `webp`, `pipe:`)
 
 	if AppRunErr != nil {
-		log.Panicln("/api/simple : AppRun error : ", AppRunErr)
-		wr.Write([]byte("/api/simple : AppRun error : " + AppRunErr.Error()))
+		log.Panicln(`/api/simple : AppRun error : `, AppRunErr)
+		wr.Write([]byte(`/api/simple : AppRun error : ` + AppRunErr.Error()))
 		return
 	}
 
-	outfile := "/tmp/exeCache/exeFiles/ffmpeg-linux-amd64/cloudflare.webp"
-
-	// write file to response
-
-	file, err := os.ReadFile(outfile)
-	if err != nil {
-		log.Panicln("/api/webp : open file error : ", err)
-		wr.Write([]byte("/api/webp : open file error : " + err.Error()))
-		return
-	}
-
-	wr.Header().Set("Content-Type", "image/webp")
+	wr.Header().Set(`Content-Type`, `image/webp`)
 	wr.Write(file)
 
 }
