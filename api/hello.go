@@ -7,12 +7,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/HasinduLanka/diviyago/goex"
+	"github.com/HasinduLanka/diviyago/pkg/goex"
 )
 
 func HelloEndpoint(w http.ResponseWriter, r *http.Request) {
 
-	saveAllErr := goex.SaveAllFiles("/tmp/diviyago/exeCache")
+	saveAllErr := goex.DeployEmbedFiles("/tmp/diviyago/exeCache")
 
 	if saveAllErr != nil {
 		log.Println("/api/simple : save all files error : ", saveAllErr)

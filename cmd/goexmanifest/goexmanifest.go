@@ -11,7 +11,7 @@ import (
 func main() {
 	log.Println("goexmanifest")
 
-	manifest, manifestErr := symembed.GenManifest("goex/exeFiles")
+	manifest, manifestErr := symembed.GenManifest("goex/EmbedFiles")
 
 	if manifestErr != nil {
 		log.Panicln("goexmanifest : manifest error : ", manifestErr)
@@ -20,6 +20,6 @@ func main() {
 
 	mjson, _ := json.MarshalIndent(manifest, "", "  ")
 
-	os.WriteFile("goex/exeFiles/manifest.json", mjson, 0644)
+	os.WriteFile("goex/EmbedFiles/manifest.json", mjson, 0644)
 
 }

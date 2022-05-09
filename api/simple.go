@@ -5,12 +5,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/HasinduLanka/diviyago/goex"
+	"github.com/HasinduLanka/diviyago/pkg/goex"
 )
 
 func SimpleEndpoint(wr http.ResponseWriter, req *http.Request) {
 
-	saveAllErr := goex.SaveAllFiles("/tmp/diviyago/exeCache/")
+	saveAllErr := goex.DeployEmbedFiles("/tmp/diviyago/exeCache/")
 
 	if saveAllErr != nil {
 		log.Panicln("/api/simple : save all files error : ", saveAllErr)
@@ -18,8 +18,8 @@ func SimpleEndpoint(wr http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	AppRun, AppRunErr := goex.ExcecProgramToString("/tmp/diviyago/exeCache/exeFiles/ffmpeg-linux-amd64/ffmpeg",
-		"-i", "/tmp/diviyago/exeCache/exeFiles/ffmpeg-linux-amd64/cloudflare.png", "/tmp/diviyago/exeCache/exeFiles/ffmpeg-linux-amd64/cloudflare.webp")
+	AppRun, AppRunErr := goex.ExcecProgramToString("/tmp/diviyago/exeCache/EmbedFiles/ffmpeg-linux-amd64/ffmpeg",
+		"-i", "/tmp/diviyago/exeCache/EmbedFiles/ffmpeg-linux-amd64/cloudflare.png", "/tmp/diviyago/exeCache/EmbedFiles/ffmpeg-linux-amd64/cloudflare.webp")
 
 	if AppRunErr != nil {
 		log.Panicln("/api/simple : AppRun error : ", AppRunErr)

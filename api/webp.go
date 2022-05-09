@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/HasinduLanka/diviyago/goex"
+	"github.com/HasinduLanka/diviyago/pkg/goex"
 )
 
 func WebpEndpoint(wr http.ResponseWriter, req *http.Request) {
 
-	saveAllErr := goex.SaveAllFiles(`/tmp/diviyago/exeCache/`)
+	saveAllErr := goex.DeployEmbedFiles(`/tmp/diviyago/exeCache/`)
 
 	if saveAllErr != nil {
 		log.Panicln(`/api/webp : save all files error : `, saveAllErr)
@@ -18,7 +18,7 @@ func WebpEndpoint(wr http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	fileBytes, fileBytesErr := os.ReadFile(`/tmp/diviyago/exeCache/exeFiles/ffmpeg-linux-amd64/cloudflare.png`)
+	fileBytes, fileBytesErr := os.ReadFile(`/tmp/diviyago/exeCache/EmbedFiles/ffmpeg-linux-amd64/cloudflare.png`)
 
 	if fileBytesErr != nil {
 		log.Panicln(`/api/webp : file read error : `, fileBytesErr)
@@ -26,8 +26,8 @@ func WebpEndpoint(wr http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	file, AppRunErr := goex.ExcecTask(nil, fileBytes, `/tmp/diviyago/exeCache/exeFiles/ffmpeg-linux-amd64/ffmpeg`, `-y`, `-f`, `image2pipe`,
-		`-i`, `pipe:`, `-vf`, `scale=360:-1`, `-f`, `webp`, `pipe:`)
+	file, AppRunErr := goex.ExcecTask(nil, fileBytes, `/tmp/diviyago/exeCache/EmbedFiles/ffmpeg-linux-amd64/ffmpeg`, `-y`, `-f`, `image2pipe`,
+		`-i`, `pipe:`, `-vf`, `scale=360:-1`, `-f`, `image2pipe`, "-c:v", "webp", `pipe:`)
 
 	if AppRunErr != nil {
 		log.Panicln(`/api/simple : AppRun error : `, AppRunErr)

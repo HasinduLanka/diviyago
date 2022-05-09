@@ -108,7 +108,5 @@ func ExcecProgramToString(program string, arg ...string) (string, error) {
 func getCmd(fileName string, arg ...string) (*exec.Cmd, error) {
 
 	cmd := exec.Command(fileName, arg...)
-
 	return cmd, nil
-
 }
