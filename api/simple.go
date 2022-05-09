@@ -21,7 +21,8 @@ func SimpleEndpoint(wr http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	AppRun, AppRunErr := goex.ExcecProgramToString("/tmp/exeCache/exeFiles/ffmpeg-linux-amd64/ffmpeg", "-encoders")
+	AppRun, AppRunErr := goex.ExcecProgramToString("/tmp/exeCache/exeFiles/ffmpeg-linux-amd64/ffmpeg",
+		"-i", "/tmp/exeCache/exeFiles/ffmpeg-linux-amd64/cloudflare.png", "/tmp/exeCache/exeFiles/ffmpeg-linux-amd64/cloudflare.webp")
 
 	if AppRunErr != nil {
 		log.Panicln("/api/simple : AppRun error : ", AppRunErr)
