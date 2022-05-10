@@ -22,7 +22,7 @@ type Converter struct {
 type TransformationResult struct {
 	Transformation
 	FileExtension string
-	Data          []byte
+	Data          *[]byte
 }
 
 type ConvertionResult struct {
@@ -115,7 +115,7 @@ func (cnv *Converter) Convert(input []byte, endtask chan bool) ConvertionResult 
 
 			result.TransformedResults[tid] = &TransformationResult{
 				Transformation: *trn,
-				Data:           cmdRes,
+				Data:           &cmdRes,
 				FileExtension:  trn.GetFileExtention(),
 			}
 
@@ -132,11 +132,13 @@ func (cnv *Converter) Convert(input []byte, endtask chan bool) ConvertionResult 
 
 			result.TransformedResults[tid] = &TransformationResult{
 				Transformation: *trn,
-				Data:           fileBytes,
+				Data:           &fileBytes,
 				FileExtension:  trn.GetFileExtention(),
 			}
 		}
 	}
+
+	result.UnifyDuplicates()
 
 	return result
 }
@@ -158,7 +160,7 @@ func (cnv *Converter) buildCommand(outputDir string, ffmpegExe string) (string, 
 	for trnsID, trn := range cnv.Transform {
 
 		if trn.Scale != nil {
-			command = append(command, `-vf`, `scale=`+strconv.Itoa(trn.Scale.Width)+`:`+strconv.Itoa(trn.Scale.Height))
+			command = append(command, `-vf`, `scale=min'(iw,`+strconv.Itoa(trn.Scale.Width)+`)':min'(ih,`+strconv.Itoa(trn.Scale.Height)+`)'`)
 		}
 
 		if trn.Format != FFMPEGFormatNone {
@@ -200,4 +202,55 @@ func (cnv *Converter) buildCommand(outputDir string, ffmpegExe string) (string, 
 
 	return ffmpegExe, command
 
+}
+
+func (cres *ConvertionResult) UnifyDuplicates() {
+
+	type transformSize struct {
+		id string
+		sz int
+	}
+
+	transformSizes := make([]transformSize, 0, len(cres.TransformedResults))
+
+	for trid, trn := range cres.TransformedResults {
+		transformSizes = append(transformSizes, transformSize{id: trid, sz: len(*trn.Data)})
+	}
+
+	const KB = 1024
+	const UnifyRange = 512 // bytes
+	// iterate over all transformations
+	for i := 0; i < len(transformSizes); i++ {
+
+		// skip small files
+		if transformSizes[i].sz < 2*KB {
+			continue
+		}
+
+		for j := i + 1; j < len(transformSizes); j++ {
+
+			// skip small files
+			if transformSizes[j].sz < 2*KB {
+				continue
+			}
+
+			// check if transformations are close enough
+			sizeDiff := abs(transformSizes[i].sz - transformSizes[j].sz)
+
+			if sizeDiff < UnifyRange {
+				// merge transformations
+				cres.TransformedResults[transformSizes[i].id].Data = cres.TransformedResults[transformSizes[j].id].Data
+				// log.Println("Merged transformations:", transformSizes[i].id, "and", transformSizes[j].id)
+			}
+
+		}
+	}
+
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }

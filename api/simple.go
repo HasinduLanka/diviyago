@@ -35,5 +35,5 @@ func SimpleEndpoint(wr http.ResponseWriter, req *http.Request) {
 	selectedRes := result.TransformedResults[transformedIDs[indx]]
 
 	wr.Header().Set(`Content-Type`, selectedRes.VideoCodec.ContentType())
-	wr.Write(selectedRes.Data)
+	wr.Write(*selectedRes.Data)
 }
