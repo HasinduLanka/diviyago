@@ -10,6 +10,7 @@ export interface TransformedResult {
     AudioCodec?: string;
     Scale?: Scale;
     Data?: string;
+    FileExtension?: string
 }
 
 export interface Scale {

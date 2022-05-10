@@ -73,6 +73,7 @@ func FormatFromContentType(contentType string) FFMPEGFormat {
 
 }
 
+// Set the content type for transformation
 func (tr *Transformation) ContentType(contentType string) *Transformation {
 	tr.Format = FormatFromContentType(contentType)
 
@@ -85,6 +86,10 @@ func (tr *Transformation) ContentType(contentType string) *Transformation {
 		tr.VideoCodec = FFMPEGCodecPng
 		tr.AudioCodec = FFMPEGCodecNone
 
+	case "image/jpeg", "image/jpg":
+		tr.VideoCodec = FFMPEGCodecJpg
+		tr.AudioCodec = FFMPEGCodecNone
+
 	default:
 		tr.VideoCodec = FFMPEGCodecNone
 		tr.AudioCodec = FFMPEGCodecNone
@@ -94,4 +99,16 @@ func (tr *Transformation) ContentType(contentType string) *Transformation {
 	return tr
 }
 
-// (format FFMPEGFormat, videoCodec FFMPEGCodec, audioCodec FFMPEGCodec)
+func (tr *Transformation) GetFileExtention() string {
+
+	if tr.VideoCodec != FFMPEGCodecNone {
+		return tr.VideoCodec.FileExtension()
+
+	} else if tr.AudioCodec != FFMPEGCodecNone {
+		return tr.AudioCodec.FileExtension()
+
+	} else {
+		return ""
+
+	}
+}

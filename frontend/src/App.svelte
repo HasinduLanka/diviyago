@@ -65,7 +65,6 @@
           }
         })
         .catch(async (error) => {
-          
           msg = await error;
         });
     }
@@ -125,6 +124,10 @@
             <p>
               Size: {result.TransformedResults[transformedResultID].Data
                 .length / 1024} KB
+            </p>
+            <p>
+              Extention: {result.TransformedResults[transformedResultID]
+                .FileExtension}
             </p>
             <img
               src={`data:${result.TransformedResults[transformedResultID].VideoCodec};base64,${result.TransformedResults[transformedResultID].Data}`}

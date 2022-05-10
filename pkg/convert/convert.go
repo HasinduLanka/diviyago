@@ -21,7 +21,8 @@ type Converter struct {
 
 type TransformationResult struct {
 	Transformation
-	Data []byte
+	FileExtension string
+	Data          []byte
 }
 
 type ConvertionResult struct {
@@ -115,6 +116,7 @@ func (cnv *Converter) Convert(input []byte, endtask chan bool) ConvertionResult 
 			result.TransformedResults[tid] = &TransformationResult{
 				Transformation: *trn,
 				Data:           cmdRes,
+				FileExtension:  trn.GetFileExtention(),
 			}
 
 		} else {
@@ -131,6 +133,7 @@ func (cnv *Converter) Convert(input []byte, endtask chan bool) ConvertionResult 
 			result.TransformedResults[tid] = &TransformationResult{
 				Transformation: *trn,
 				Data:           fileBytes,
+				FileExtension:  trn.GetFileExtention(),
 			}
 		}
 	}

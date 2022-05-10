@@ -45,27 +45,22 @@ const (
 	FFMPEGCodecNone FFMPEGCodec = ""
 	FFMPEGCodecWebp FFMPEGCodec = "webp"
 	FFMPEGCodecPng  FFMPEGCodec = "png"
+	FFMPEGCodecJpg  FFMPEGCodec = "mjpeg"
 )
 
 func (codec FFMPEGCodec) ContentType() string {
 
-	const imageCodec FFMPEGCodec = "image/"
-
-	var contentType FFMPEGCodec
+	const imageCodec = "image/"
 
 	switch codec {
 
-	case FFMPEGCodecWebp:
-		contentType = imageCodec + FFMPEGCodecWebp
-
-	case FFMPEGCodecPng:
-		contentType = imageCodec + FFMPEGCodecPng
+	case FFMPEGCodecWebp, FFMPEGCodecPng, FFMPEGCodecJpg:
+		return imageCodec + codec.FileExtension()
 
 	default:
 		return ""
 	}
 
-	return string(contentType)
 }
 
 func (codec FFMPEGCodec) FileExtension() string {
@@ -75,10 +70,13 @@ func (codec FFMPEGCodec) FileExtension() string {
 	switch codec {
 
 	case FFMPEGCodecWebp:
-		contentType = FFMPEGCodecWebp
+		contentType = "webp"
 
 	case FFMPEGCodecPng:
-		contentType = FFMPEGCodecPng
+		contentType = "png"
+
+	case FFMPEGCodecJpg:
+		contentType = "jpg"
 
 	default:
 		return ""
