@@ -9,6 +9,7 @@ export interface TransformedResult {
     VideoCodec?: string;
     AudioCodec?: string;
     Scale?: Scale;
+    Quality?: number;
     Data?: string;
     FileExtension?: string
 }

@@ -169,10 +169,18 @@ func (cnv *Converter) buildCommand(outputDir string, ffmpegExe string) (string, 
 
 		if trn.VideoCodec != FFMPEGCodecNone {
 			command = append(command, `-c:v`, string(trn.VideoCodec))
+
+			if trn.Quality != FFMPEGQualityNone {
+				command = append(command, trn.Quality.ToArgs(trn.VideoCodec, FFMPEGCodecTypeVideo)...)
+			}
 		}
 
 		if trn.AudioCodec != FFMPEGCodecNone {
 			command = append(command, `-c:a`, string(trn.AudioCodec))
+
+			if trn.Quality != FFMPEGQualityNone {
+				command = append(command, trn.Quality.ToArgs(trn.AudioCodec, FFMPEGCodecTypeAudio)...)
+			}
 		}
 
 		if len(trn.outputCacheFile) == 0 {

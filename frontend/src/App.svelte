@@ -117,18 +117,37 @@
               Scale: {JSON.stringify(
                 result.TransformedResults[transformedResultID].Scale
               )}
-            </p>
-            <p>
+
+              <br />
+
               Codec: {result.TransformedResults[transformedResultID].VideoCodec}
-            </p>
-            <p>
+
+              <br />
+
               Size: {result.TransformedResults[transformedResultID].Data
                 .length / 1024} KB
-            </p>
-            <p>
+
+              <br />
+
+              Quality: {result.TransformedResults[transformedResultID].Quality}
+
+              <br />
+
+              Q/S ratio: {(result.TransformedResults[transformedResultID]
+                .Quality *
+                1024 *
+                512) /
+                result.TransformedResults[transformedResultID].Data.length}
+
+              <br />
+
               Extention: {result.TransformedResults[transformedResultID]
                 .FileExtension}
+
+              <br />
+              <br />
             </p>
+
             <img
               src={`data:${result.TransformedResults[transformedResultID].VideoCodec};base64,${result.TransformedResults[transformedResultID].Data}`}
               alt={transformedResultID}

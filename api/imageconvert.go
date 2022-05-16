@@ -41,7 +41,6 @@ func ImageConvertEndpoint(wr http.ResponseWriter, req *http.Request) {
 
 	converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(128))
 	converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(640))
-	converter.AddTransformation(convert.NewTransformation().ContentType(`image/png`).ScaleByWidth(640))
 	converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(1080))
 	converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(1920))
 

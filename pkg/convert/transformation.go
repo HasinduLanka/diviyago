@@ -7,6 +7,7 @@ type Transformation struct {
 	VideoCodec FFMPEGCodec
 	AudioCodec FFMPEGCodec
 	Scale      *FFMPEGScale
+	Quality    FFMPEGQuality
 
 	outputCacheFile string
 }
@@ -17,6 +18,7 @@ func NewTransformation() *Transformation {
 		VideoCodec: FFMPEGCodecNone,
 		AudioCodec: FFMPEGCodecNone,
 		Scale:      nil,
+		Quality:    FFMPEGQualityHigh,
 	}
 }
 
@@ -48,6 +50,11 @@ func (tr *Transformation) ScaleByHeight(height int) *Transformation {
 
 func (tr *Transformation) NoScaling() *Transformation {
 	tr.Scale = nil
+	return tr
+}
+
+func (tr *Transformation) SetQuality(quality FFMPEGQuality) *Transformation {
+	tr.Quality = quality
 	return tr
 }
 
