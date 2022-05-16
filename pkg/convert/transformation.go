@@ -6,8 +6,8 @@ type Transformation struct {
 	Format     FFMPEGFormat
 	VideoCodec FFMPEGCodec
 	AudioCodec FFMPEGCodec
-	Scale      *FFMPEGScale
-	Quality    FFMPEGQuality
+	Resolution *TransformResolution
+	Quality    TransformQuality
 
 	outputCacheFile string
 }
@@ -17,43 +17,43 @@ func NewTransformation() *Transformation {
 		Format:     FFMPEGFormatNone,
 		VideoCodec: FFMPEGCodecNone,
 		AudioCodec: FFMPEGCodecNone,
-		Scale:      nil,
-		Quality:    FFMPEGQualityHigh,
+		Resolution: nil,
+		Quality:    TransformQualityHigh,
 	}
 }
 
-func (tr *Transformation) ScaleByWidth(width int) *Transformation {
+func (tr *Transformation) ResolutionByWidth(width int) *Transformation {
 
-	if tr.Scale == nil {
-		tr.Scale = &FFMPEGScale{
-			Width:  FFMPEGScaleAuto,
-			Height: FFMPEGScaleAuto,
+	if tr.Resolution == nil {
+		tr.Resolution = &TransformResolution{
+			Width:  TransformResolutionAuto,
+			Height: TransformResolutionAuto,
 		}
 	}
 
-	tr.Scale.Width = width
+	tr.Resolution.Width = width
 	return tr
 }
 
-func (tr *Transformation) ScaleByHeight(height int) *Transformation {
+func (tr *Transformation) ResolutionByHeight(height int) *Transformation {
 
-	if tr.Scale == nil {
-		tr.Scale = &FFMPEGScale{
-			Width:  FFMPEGScaleAuto,
-			Height: FFMPEGScaleAuto,
+	if tr.Resolution == nil {
+		tr.Resolution = &TransformResolution{
+			Width:  TransformResolutionAuto,
+			Height: TransformResolutionAuto,
 		}
 	}
 
-	tr.Scale.Height = height
+	tr.Resolution.Height = height
 	return tr
 }
 
 func (tr *Transformation) NoScaling() *Transformation {
-	tr.Scale = nil
+	tr.Resolution = nil
 	return tr
 }
 
-func (tr *Transformation) SetQuality(quality FFMPEGQuality) *Transformation {
+func (tr *Transformation) SetQuality(quality TransformQuality) *Transformation {
 	tr.Quality = quality
 	return tr
 }
@@ -98,9 +98,16 @@ func (tr *Transformation) ContentType(contentType string) *Transformation {
 		tr.AudioCodec = FFMPEGCodecNone
 
 	default:
-		tr.VideoCodec = FFMPEGCodecNone
-		tr.AudioCodec = FFMPEGCodecNone
 
+		if strings.HasPrefix(contentType, "image") {
+			tr.VideoCodec = FFMPEGCodecWebp
+			tr.AudioCodec = FFMPEGCodecNone
+
+		} else {
+			tr.VideoCodec = FFMPEGCodecNone
+			tr.AudioCodec = FFMPEGCodecNone
+
+		}
 	}
 
 	return tr
@@ -113,6 +120,20 @@ func (tr *Transformation) GetFileExtention() string {
 
 	} else if tr.AudioCodec != FFMPEGCodecNone {
 		return tr.AudioCodec.FileExtension()
+
+	} else {
+		return ""
+
+	}
+}
+
+func (tr *Transformation) GetContentType() string {
+
+	if tr.VideoCodec != FFMPEGCodecNone {
+		return tr.VideoCodec.ContentType()
+
+	} else if tr.AudioCodec != FFMPEGCodecNone {
+		return tr.AudioCodec.ContentType()
 
 	} else {
 		return ""

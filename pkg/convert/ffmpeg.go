@@ -93,13 +93,13 @@ func (codec FFMPEGCodec) FileExtension() string {
 	return string(contentType)
 }
 
-type FFMPEGScale struct {
+type TransformResolution struct {
 	Width  int
 	Height int
 }
 
 const (
-	FFMPEGScaleAuto = -1
+	TransformResolutionAuto = -1
 )
 
 // Extracts FFMPEG executable and dependencies from cache.
@@ -126,23 +126,23 @@ func InitializeFFMPEG() (string, error) {
 // Must be in range of 0 to 100, where 0 is lowest and 100 is highest quality.
 //
 // FFMPEGQualityHigh (80) is the default value.
-type FFMPEGQuality int
+type TransformQuality int
 
 const (
-	FFMPEGQualityNone     FFMPEGQuality = 0
-	FFMPEGQualityLow      FFMPEGQuality = 55
-	FFMPEGQualityMid      FFMPEGQuality = 70
-	FFMPEGQualityHigh     FFMPEGQuality = 80
-	FFMPEGQualityVeryHigh FFMPEGQuality = 90
+	TransformQualityNone  TransformQuality = 0
+	TransformQualityLow   TransformQuality = 55
+	TransformQualityMid   TransformQuality = 70
+	TransformQualityHigh  TransformQuality = 80
+	TransformQualityExtra TransformQuality = 90
 )
 
 // Returns the quality parameter for FFMPEG in 0 to 100 scale. Useful for formats like WEBP
-func (ql FFMPEGQuality) To100Scale() string {
+func (ql TransformQuality) To100Scale() string {
 	return strconv.Itoa(int(ql))
 }
 
 // Returns the quality parameter for FFMPEG Q-Scale. Value ranges from 0 to 31, where 31 is the lowest quality.
-func (ql FFMPEGQuality) ToQScale() string {
+func (ql TransformQuality) ToQScale() string {
 	return strconv.Itoa(int((100 - ql) * 31 / 100))
 }
 
@@ -153,7 +153,7 @@ func (ql FFMPEGQuality) ToQScale() string {
 // for MP4, the return value could be [ -qscale:v 3 ]
 //
 // for WEBP, the return value could be [ -quality 80 -compression_level 6 ]
-func (ql FFMPEGQuality) ToArgs(codec FFMPEGCodec, codecType FFMPEGCodecType) []string {
+func (ql TransformQuality) ToArgs(codec FFMPEGCodec, codecType FFMPEGCodecType) []string {
 
 	switch codec {
 	case FFMPEGCodecWebp:

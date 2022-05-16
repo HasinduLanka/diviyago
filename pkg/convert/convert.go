@@ -159,8 +159,8 @@ func (cnv *Converter) buildCommand(outputDir string, ffmpegExe string) (string, 
 
 	for trnsID, trn := range cnv.Transform {
 
-		if trn.Scale != nil {
-			command = append(command, `-vf`, `scale=min'(iw,`+strconv.Itoa(trn.Scale.Width)+`)':min'(ih,`+strconv.Itoa(trn.Scale.Height)+`)'`)
+		if trn.Resolution != nil {
+			command = append(command, `-vf`, `scale=min'(iw,`+strconv.Itoa(trn.Resolution.Width)+`)':min'(ih,`+strconv.Itoa(trn.Resolution.Height)+`)'`)
 		}
 
 		if trn.Format != FFMPEGFormatNone {
@@ -170,7 +170,7 @@ func (cnv *Converter) buildCommand(outputDir string, ffmpegExe string) (string, 
 		if trn.VideoCodec != FFMPEGCodecNone {
 			command = append(command, `-c:v`, string(trn.VideoCodec))
 
-			if trn.Quality != FFMPEGQualityNone {
+			if trn.Quality != TransformQualityNone {
 				command = append(command, trn.Quality.ToArgs(trn.VideoCodec, FFMPEGCodecTypeVideo)...)
 			}
 		}
@@ -178,7 +178,7 @@ func (cnv *Converter) buildCommand(outputDir string, ffmpegExe string) (string, 
 		if trn.AudioCodec != FFMPEGCodecNone {
 			command = append(command, `-c:a`, string(trn.AudioCodec))
 
-			if trn.Quality != FFMPEGQualityNone {
+			if trn.Quality != TransformQualityNone {
 				command = append(command, trn.Quality.ToArgs(trn.AudioCodec, FFMPEGCodecTypeAudio)...)
 			}
 		}

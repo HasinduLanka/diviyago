@@ -8,13 +8,13 @@ export interface TransformedResult {
     Format?: string;
     VideoCodec?: string;
     AudioCodec?: string;
-    Scale?: Scale;
+    Resolution?: Resolution;
     Quality?: number;
     Data?: string;
     FileExtension?: string
 }
 
-export interface Scale {
+export interface Resolution {
     Width?: number;
     Height?: number;
 }

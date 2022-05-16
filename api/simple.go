@@ -14,10 +14,10 @@ func SimpleEndpoint(wr http.ResponseWriter, req *http.Request) {
 	testFileBytes := testmedia.FileGoLogo
 
 	converter := convert.NewImageConverter()
-	img_s := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(128))
-	img_m := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(640))
-	img_l := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(1080))
-	img_h := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(1920))
+	img_s := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ResolutionByWidth(128))
+	img_m := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ResolutionByWidth(640))
+	img_l := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ResolutionByWidth(1080))
+	img_h := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ResolutionByWidth(1920))
 
 	result := converter.Convert(testFileBytes, nil)
 

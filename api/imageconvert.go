@@ -39,10 +39,10 @@ func ImageConvertEndpoint(wr http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(128))
-	converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(640))
-	converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(1080))
-	converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ScaleByWidth(1920))
+	converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ResolutionByWidth(128))
+	converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ResolutionByWidth(640))
+	converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ResolutionByWidth(1080))
+	converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ResolutionByWidth(1920))
 
 	result := converter.Convert(uploadReqData, nil)
 

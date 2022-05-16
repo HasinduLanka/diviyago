@@ -114,8 +114,8 @@
           <div class="block">
             <h4>{transformedResultID}</h4>
             <p>
-              Scale: {JSON.stringify(
-                result.TransformedResults[transformedResultID].Scale
+              Resolution: {JSON.stringify(
+                result.TransformedResults[transformedResultID].Resolution
               )}
 
               <br />
