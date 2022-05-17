@@ -66,18 +66,13 @@ func FormatFromContentType(contentType string) FFMPEGFormat {
 
 	contentType = strings.TrimSpace(strings.ToLower(contentType))
 
-	switch contentType {
-	case
-		"image/webp",
-		"image/png",
-		"image/jpeg", "image/jpg",
-		"image/gif":
+	if strings.HasPrefix(contentType, "image") {
 		return FFMPEGFormatImagePipe
 
-	default:
+	} else {
 		return FFMPEGFormatNone
-	}
 
+	}
 }
 
 // Set the content type for transformation
