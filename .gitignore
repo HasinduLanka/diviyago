@@ -1,3 +1,4 @@
 exeCache/**
 api/exeCache/**
 /.last_release
+lambda/build/**

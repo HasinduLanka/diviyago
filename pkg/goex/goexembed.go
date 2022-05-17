@@ -16,7 +16,7 @@ import (
 //go:embed EmbedFiles/*
 var embedcontent embed.FS
 
-const fully_written_file = "EmbedFiles/.fully_written"
+const fully_written_file = "EmbedFiles/.fully_written_v10001"
 
 func GetEmbededFile(fileName string) ([]byte, error) {
 	return embedcontent.ReadFile(fileName)

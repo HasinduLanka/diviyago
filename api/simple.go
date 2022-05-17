@@ -11,7 +11,7 @@ import (
 
 func SimpleEndpoint(wr http.ResponseWriter, req *http.Request) {
 
-	testFileBytes := testmedia.FileGoLogo
+	testFileBytes := testmedia.FileEarth
 
 	converter := convert.NewImageConverter()
 	img_s := converter.AddTransformation(convert.NewTransformation().ContentType(`image/webp`).ResolutionByWidth(128))
