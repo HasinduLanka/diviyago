@@ -158,7 +158,7 @@ func (ql TransformQuality) ToArgs(codec FFMPEGCodec, codecType FFMPEGCodecType) 
 	switch codec {
 	case FFMPEGCodecWebp:
 		// Asumption: it is always a video codec
-		return []string{"-quality", ql.To100Scale(), "-compression_level", "6"}
+		return []string{"-quality", ql.To100Scale()}
 
 	default:
 		return []string{"-qscale:" + string(codecType), ql.ToQScale()}

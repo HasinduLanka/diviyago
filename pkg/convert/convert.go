@@ -164,7 +164,7 @@ func (cnv *Converter) buildCommand(outputDir string, ffmpegExe string) (string, 
 		}
 
 		if trn.Format != FFMPEGFormatNone {
-			command = append(command, `-f`, string(trn.Format))
+			command = append(command, `-f`, string(trn.Format.ToFile()))
 		}
 
 		if trn.VideoCodec != FFMPEGCodecNone {
